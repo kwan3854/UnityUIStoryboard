@@ -1,6 +1,6 @@
 {
-    "name": "com.kwanjoong.unityuistoryboard.Editor",
-    "rootNamespace": "",
+    "name": "com.kwanjoong.unityuistoryboard",
+    "rootNamespace": "com.kwanjoong.unityuistoryboard",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

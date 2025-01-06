@@ -1,8 +1,10 @@
 {
     "name": "com.kwanjoong.unityuistoryboard.Editor",
-    "rootNamespace": "",
-    "references": [],
-    "includePlatforms": [],
+    "rootNamespace": "com.kwanjoong.unityuistoryboard",
+    "references": ["com.kwanjoong.unityuistoryboard"],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
