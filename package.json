@@ -1,0 +1,33 @@
+{
+  "name": "com.kwanjoong.unityuistoryboard",
+  "version": "0.0.1",
+  "displayName": "Unity UI Storyboard",
+  "description": "A Unity package for structured UI development.",
+  "unity": "2022.3",
+  "documentationUrl": "https://kwanjoong-dev.gitbook.io/unity-ui-storyboard",
+  "keywords": [
+    "ugui",
+    "storyboard",
+    "Clean Architecture",
+    "Simple Sclean Architecture",
+    "Onion Architecture"
+  ],
+  "author": {
+    "name": "Kwanjoong Lee",
+    "url": "https://github.com/kwan3854"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kwan3854/UnityUIStoryboard.git"
+  },
+  "dependencies": {
+    "com.cysharp.unitask": "^2.5.0",
+    "jp.hadashikick.vcontainer": "^1.6.0",
+    "com.harumak.unityscreennavigator": "^1.7.0",
+    "jp.adarapata.screensystem": "^0.0.11",
+    "com.cysharp.messagepipe": "^1.8.0",
+    "com.cysharp.messagepipe.vcontainer": "^1.8.0",
+    "com.harumak.upalette": "^2.5.2"
+  },
+  "license": "MIT"
+}
