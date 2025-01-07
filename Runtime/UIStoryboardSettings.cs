@@ -18,6 +18,73 @@ namespace com.kwanjoong.unityuistoryboard
     public static class UIStoryboardSettings
     {
 #if UNITY_EDITOR
+
+        #region Folder Names
+        private const string CoreFolder = "Core";
+        private const string UIFolder = "UI";
+        private const string LifetimeScopeFolder = "LifetimeScope";
+        private const string ModelFolder = "Model";
+        private const string PresentationFolder = "Presentation";
+        private const string ViewFolder = "View";
+        private const string GatewayFolder = "Gateway";
+        private const string RepositoryFolder = "Repository";
+        private const string UseCaseFolder = "UseCase";
+        private const string OutGameFolder = "OutGame";
+        private const string RuntimeFolder = "Runtime";
+        private const string BuilderFolder = "Builder";
+        private const string PresenterFolder = "Presenter";
+        #endregion
+
+        #region Reference Names
+        private const string UniTaskRef = "UniTask";
+        private const string UniTaskLinqRef = "UniTask.Linq";
+        private const string UniTaskTextMeshProRef = "UniTask.TextMeshPro";
+        private const string VContainerRef = "VContainer";
+        private const string MessagePipeRef = "MessagePipe";
+        private const string MessagePipeVContainerRef = "MessagePipe.VContainer";
+        private const string UnityScreenNavigatorRef = "UnityScreenNavigator";
+        private const string ScreenSystemRef = "ScreenSystem";
+        private const string TextMeshProRef = "Unity.TextMeshPro";
+        
+        private const string PresentationRef = "OutGame.Runtime.UI.Presentation";
+        private const string UILifetimeScopeRef = "OutGame.Runtime.UI.LifetimeScope";
+        private const string ViewRef = "OutGame.Runtime.UI.View";
+        private const string ModelRef = "OutGame.Runtime.UI.Model";
+        
+        private const string UseCaseRef = "OutGame.Runtime.Core.UseCase";
+        private const string GatewayRef = "OutGame.Runtime.Core.Gateway";
+        private const string RepositoryRef = "OutGame.Runtime.Core.Repository";
+        private const string CoreLifetimeScopeRef = "OutGame.Runtime.Core.LifetimeScope";
+        #endregion
+
+        #region Core References
+        private static readonly string[] CoreGatewayRefs = { UniTaskRef, UniTaskLinqRef, VContainerRef };
+        private static readonly string[] CoreLifetimeScopeRefs = { VContainerRef, MessagePipeRef, MessagePipeVContainerRef,
+            UnityScreenNavigatorRef, ScreenSystemRef, PresentationRef, UseCaseRef, GatewayRef, RepositoryRef };
+        private static readonly string[] RepositoryRefs = { VContainerRef, UniTaskRef, UniTaskLinqRef, GatewayRef };
+        private static readonly string[] UseCaseRefs = { VContainerRef, UniTaskRef, UniTaskLinqRef, RepositoryRef };
+        #endregion
+
+        #region UI References
+        private static readonly string[] UILifetimeScopeRefs =
+        {
+            UnityScreenNavigatorRef, ScreenSystemRef, VContainerRef, MessagePipeRef, MessagePipeVContainerRef, ViewRef,
+            PresentationRef, UseCaseRef
+        };
+        private static readonly string[] ModelRefs = { UniTaskRef, UniTaskLinqRef };
+        private static readonly string[] PresentationRefs =
+        {
+            UniTaskRef, UniTaskLinqRef, UnityScreenNavigatorRef, ScreenSystemRef, VContainerRef, ViewRef, ModelRef,
+            UseCaseRef
+        };
+        private static readonly string[] ViewRefs =
+        {
+            UniTaskRef, UniTaskLinqRef, UniTaskTextMeshProRef, ScreenSystemRef, TextMeshProRef, UnityScreenNavigatorRef,
+            ModelRef
+        };
+        #endregion
+
+        
         /// <summary>
         /// Loads the first found UIStoryboardSettingsAsset from the project, or null if none exist.
         /// </summary>
@@ -107,31 +174,31 @@ namespace com.kwanjoong.unityuistoryboard
 
             // Example subfolders: OutGame/Runtime/Core, OutGame/Runtime/UI, etc.
             // (Adjust as needed)
-            string outGamePath = Path.Combine(rootPath, "OutGame");
+            string outGamePath = Path.Combine(rootPath, OutGameFolder);
             CreateFolderIfNotExist(outGamePath);
 
-            string runtimePath = Path.Combine(outGamePath, "Runtime");
+            string runtimePath = Path.Combine(outGamePath, RuntimeFolder);
             CreateFolderIfNotExist(runtimePath);
 
             // Core
-            string corePath = Path.Combine(runtimePath, "Core");
+            string corePath = Path.Combine(runtimePath, CoreFolder);
             CreateFolderIfNotExist(corePath);
-            CreateFolderIfNotExist(Path.Combine(corePath, "Gateway"));
-            CreateFolderIfNotExist(Path.Combine(corePath, "LifetimeScope"));
-            CreateFolderIfNotExist(Path.Combine(corePath, "Repository"));
-            CreateFolderIfNotExist(Path.Combine(corePath, "UseCase"));
+            CreateFolderIfNotExist(Path.Combine(corePath, GatewayFolder));
+            CreateFolderIfNotExist(Path.Combine(corePath, LifetimeScopeFolder));
+            CreateFolderIfNotExist(Path.Combine(corePath, RepositoryFolder));
+            CreateFolderIfNotExist(Path.Combine(corePath, UseCaseFolder));
 
             // UI
-            string uiPath = Path.Combine(runtimePath, "UI");
+            string uiPath = Path.Combine(runtimePath, UIFolder);
             CreateFolderIfNotExist(uiPath);
-            CreateFolderIfNotExist(Path.Combine(uiPath, "LifetimeScope"));
-            CreateFolderIfNotExist(Path.Combine(uiPath, "Model"));
-            CreateFolderIfNotExist(Path.Combine(uiPath, "View"));
+            CreateFolderIfNotExist(Path.Combine(uiPath, LifetimeScopeFolder));
+            CreateFolderIfNotExist(Path.Combine(uiPath, ModelFolder));
+            CreateFolderIfNotExist(Path.Combine(uiPath, PresentationFolder));
 
-            string presentationPath = Path.Combine(uiPath, "Presentation");
+            string presentationPath = Path.Combine(uiPath, PresentationFolder);
             CreateFolderIfNotExist(presentationPath);
-            CreateFolderIfNotExist(Path.Combine(presentationPath, "Builder"));
-            CreateFolderIfNotExist(Path.Combine(presentationPath, "Presenter"));
+            CreateFolderIfNotExist(Path.Combine(presentationPath, BuilderFolder));
+            CreateFolderIfNotExist(Path.Combine(presentationPath, PresenterFolder));
 
             // Addressable folder
             if (!string.IsNullOrEmpty(settings.AddressableRootFolderName))
@@ -153,20 +220,17 @@ namespace com.kwanjoong.unityuistoryboard
         /// </summary>
         private static void CreateAsmdefFiles(string corePath, string uiPath)
         {
-            // Example references
-            string[] exampleRefs = { "UniTask", "VContainer" };
-
             // UI
-            CreateAsmdef(Path.Combine(uiPath, "LifetimeScope"), "OutGame.Runtime.UI.LifetimeScope", exampleRefs);
-            CreateAsmdef(Path.Combine(uiPath, "Model"),        "OutGame.Runtime.UI.Model",        exampleRefs);
-            CreateAsmdef(Path.Combine(uiPath, "Presentation"), "OutGame.Runtime.UI.Presentation", exampleRefs);
-            CreateAsmdef(Path.Combine(uiPath, "View"),         "OutGame.Runtime.UI.View",         exampleRefs);
+            CreateAsmdef(Path.Combine(uiPath, LifetimeScopeFolder), UILifetimeScopeRef, UILifetimeScopeRefs);
+            CreateAsmdef(Path.Combine(uiPath, ModelFolder), ModelRef, ModelRefs);
+            CreateAsmdef(Path.Combine(uiPath, PresentationFolder), PresentationRef, PresentationRefs);
+            CreateAsmdef(Path.Combine(uiPath, ViewFolder), ViewRef, ViewRefs);
 
             // Core
-            CreateAsmdef(Path.Combine(corePath, "Gateway"),     "OutGame.Runtime.Core.Gateway",     exampleRefs);
-            CreateAsmdef(Path.Combine(corePath, "LifetimeScope"), "OutGame.Runtime.Core.LifetimeScope", exampleRefs);
-            CreateAsmdef(Path.Combine(corePath, "Repository"),  "OutGame.Runtime.Core.Repository",  exampleRefs);
-            CreateAsmdef(Path.Combine(corePath, "UseCase"),     "OutGame.Runtime.Core.UseCase",     exampleRefs);
+            CreateAsmdef(Path.Combine(corePath, GatewayFolder), GatewayRef, CoreGatewayRefs);
+            CreateAsmdef(Path.Combine(corePath, LifetimeScopeFolder), CoreLifetimeScopeRef, CoreLifetimeScopeRefs);
+            CreateAsmdef(Path.Combine(corePath, RepositoryFolder), RepositoryRef, RepositoryRefs);
+            CreateAsmdef(Path.Combine(corePath, UseCaseFolder), UseCaseRef, UseCaseRefs);
         }
 
         private static void CreateAsmdef(string folderPath, string assemblyName, string[] references)
