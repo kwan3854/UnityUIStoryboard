@@ -15,7 +15,7 @@ namespace com.kwanjoong.unityuistoryboard
         [SerializeField] private string addressableRootFolderName = "Prefabs";
 
         /// <summary>
-        /// Example: The top-level folder name (e.g. "SampleProject").
+        /// The top-level folder name (e.g. "SampleProject").
         /// </summary>
         public string ProjectName
         {
@@ -24,7 +24,7 @@ namespace com.kwanjoong.unityuistoryboard
         }
 
         /// <summary>
-        /// Example: Usually "Assets".
+        /// Usually "Assets".
         /// </summary>
         public string ProjectRootPath
         {
@@ -33,7 +33,7 @@ namespace com.kwanjoong.unityuistoryboard
         }
 
         /// <summary>
-        /// Example: The folder name for Addressable assets (e.g. "Prefabs").
+        /// The folder name for Addressable assets (e.g. "Prefabs").
         /// </summary>
         public string AddressableRootFolderName
         {
@@ -57,7 +57,7 @@ namespace com.kwanjoong.unityuistoryboard
 #else
                 // In a built player or at runtime, if not preloaded, fallback to a new in-memory instance.
                 if (_instance == null)
-                    _instance = CreateInstance<UIStoryboardSettingsAsset>();
+                    Debug.LogError("UIStoryboardSettings scriptable object not found in preloaded assets.");
 #endif
                 return _instance;
             }
