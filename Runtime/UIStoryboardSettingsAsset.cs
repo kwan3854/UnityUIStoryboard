@@ -13,6 +13,9 @@ namespace com.kwanjoong.unityuistoryboard
         [SerializeField] private string projectName = "ProjectName";
         [SerializeField] private string projectRootPath = "Assets";
         [SerializeField] private string addressableRootFolderName = "Prefabs";
+        
+        [SerializeField] private int canvasReferenceWidth = 1080;
+        [SerializeField] private int canvasReferenceHeight = 1920;
 
         /// <summary>
         /// The top-level folder name (e.g. "SampleProject").
@@ -39,6 +42,24 @@ namespace com.kwanjoong.unityuistoryboard
         {
             get => addressableRootFolderName;
             set => addressableRootFolderName = value;
+        }
+        
+        /// <summary>
+        /// The reference resolution width for uGUI CanvasScaler.
+        /// </summary>
+        public int CanvasReferenceWidth
+        {
+            get => canvasReferenceWidth;
+            set => canvasReferenceWidth = value;
+        }
+
+        /// <summary>
+        /// The reference resolution height for uGUI CanvasScaler.
+        /// </summary>
+        public int CanvasReferenceHeight
+        {
+            get => canvasReferenceHeight;
+            set => canvasReferenceHeight = value;
         }
 
         // --------------------------------------------------------------------------------

@@ -80,6 +80,11 @@ namespace com.kwanjoong.unityuistoryboard.Editor
                 {
                     UIStoryboardSettings.CreateProjectStructure(_settingsAsset);
                 }
+                
+                EditorGUILayout.PropertyField(_serializedObject.FindProperty("canvasReferenceWidth"),
+                    new GUIContent("Canvas Reference Width"));
+                EditorGUILayout.PropertyField(_serializedObject.FindProperty("canvasReferenceHeight"),
+                    new GUIContent("Canvas Reference Height"));
 
                 _serializedObject.ApplyModifiedProperties();
             }

@@ -1,7 +1,14 @@
 {
     "name": "com.kwanjoong.unityuistoryboard.Editor",
     "rootNamespace": "com.kwanjoong.unityuistoryboard",
-    "references": ["com.kwanjoong.unityuistoryboard"],
+    "references": [
+        "com.kwanjoong.unityuistoryboard",
+        "XNode",
+        "XNodeEditor",
+        "ScreenSystem",
+        "UnityScreenNavigator",
+        "VContainer"
+    ],
     "includePlatforms": [
         "Editor"
     ],
