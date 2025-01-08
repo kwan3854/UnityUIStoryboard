@@ -1,24 +1,19 @@
 #if UNITY_EDITOR
 using System;
+using ScreenSystem.Modal;
 using UnityEditor;
 using UnityEngine;
-using XNodeEditor;
-using ScreenSystem.Page;
 using VContainer.Unity;
+using XNodeEditor;
 
 namespace com.kwanjoong.unityuistoryboard.Editor
 {
-    [CustomNodeEditor(typeof(PageNode))]
-    public class PageNodeEditor : NodeEditor
+    [CustomNodeEditor(typeof(ModalNode))]
+    public class ModalNodeEditor : NodeEditor
     {
         public override int GetWidth()
         {
-            return 700; 
-        }
-        
-        public override Color GetTint()
-        {
-            return new Color(0.25f, 0.25f, 0.25f, 1f);
+            return 700;
         }
 
         public override void OnBodyGUI()
@@ -28,27 +23,24 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             // Ports
             NodeEditorGUILayout.PortField(target.GetInputPort("pageViewIn"), GUILayout.MinWidth(30));
             NodeEditorGUILayout.PortField(target.GetInputPort("modalViewIn"), GUILayout.MinWidth(30));
-            NodeEditorGUILayout.PortField(target.GetOutputPort("pageViewOut"), GUILayout.MinWidth(30));
+            NodeEditorGUILayout.PortField(target.GetOutputPort("modalViewOut"), GUILayout.MinWidth(30));
 
             EditorGUILayout.Space();
-            
+
             EditorGUILayout.BeginHorizontal();
             {
-                // ---------------------------------------------
                 // [Left: Thumbnail]
-                // ---------------------------------------------
                 var thumbProp = serializedObject.FindProperty("cachedThumbnail");
                 Texture2D cachedTex = thumbProp.objectReferenceValue as Texture2D;
 
                 float thumbWidth = 320f;
                 float thumbHeight = 400f;
 
-
                 EditorGUILayout.BeginVertical(GUILayout.Width(thumbWidth));
                 {
                     Rect thumbRect = GUILayoutUtility.GetRect(thumbWidth, thumbHeight, GUILayout.ExpandWidth(false));
                     EditorGUI.DrawRect(thumbRect, Color.clear);
-                    
+
                     if (cachedTex != null)
                     {
                         EditorGUI.DrawPreviewTexture(
@@ -59,67 +51,55 @@ namespace com.kwanjoong.unityuistoryboard.Editor
                         );
                     }
 
-                    // Thumbnail Button
                     if (GUILayout.Button("Update Thumbnail"))
                     {
-                        var node = (PageNode)target;
+                        var node = (ModalNode)target;
                         CapturePrefabThumbnail(node);
                     }
                 }
                 EditorGUILayout.EndVertical();
 
-
-
-                // ---------------------------------------------
                 // [Right: Properties]
-                // ---------------------------------------------
                 EditorGUILayout.BeginVertical();
                 {
-                    // ----------------------------
                     // View Prefab
-                    // ----------------------------
                     var prefabProp = serializedObject.FindProperty("viewPrefab");
                     DrawObjectFieldWithOpenButton(
                         prefabProp,
                         "View Prefab",
-                        () => {
-                            // 만약 Prefab을 열기 => 애셋 열기
+                        () =>
+                        {
                             GameObject p = prefabProp.objectReferenceValue as GameObject;
                             if (p != null)
                             {
-                                // ping or open in project
                                 EditorGUIUtility.PingObject(p);
-                                // optionally: AssetDatabase.OpenAsset(p);
+                                // or AssetDatabase.OpenAsset(p);
                             }
                         }
                     );
 
-                    // Prefab Info (Includes "LifetimeScope" open button)
+                    // If prefab != null => check info
                     GameObject prefab = prefabProp.objectReferenceValue as GameObject;
                     if (prefab != null)
                     {
-                        DrawPageViewAndScopeInfo(prefab);
+                        DrawModalViewAndScopeInfo(prefab);
                     }
 
                     EditorGUILayout.Space();
 
-                    // ----------------------------
-                    // Lifecycle
-                    // ----------------------------
+                    // Lifecycle => LifecycleModalBase
                     var lifecycleProp = serializedObject.FindProperty("lifecycleScript");
                     DrawMonoScriptWithOpenButton(
                         lifecycleProp,
                         "Lifecycle",
                         scriptClass => {
-                            bool isValid = typeof(LifecyclePageBase).IsAssignableFrom(scriptClass) 
+                            bool isValid = typeof(LifecycleModalBase).IsAssignableFrom(scriptClass)
                                            && !scriptClass.IsAbstract;
                             return isValid;
                         }
                     );
 
-                    // ----------------------------
-                    // Model
-                    // ----------------------------
+                    // Model => any class (non-abstract)
                     var modelProp = serializedObject.FindProperty("modelScript");
                     DrawMonoScriptWithOpenButton(
                         modelProp,
@@ -127,21 +107,19 @@ namespace com.kwanjoong.unityuistoryboard.Editor
                         scriptClass => !scriptClass.IsAbstract
                     );
 
-                    // ----------------------------
-                    // Builder + memo
-                    // ----------------------------
+                    // Builder => IModalBuilder
                     var builderProp = serializedObject.FindProperty("builderScript");
                     DrawMonoScriptWithOpenButton(
                         builderProp,
                         "Builder",
                         scriptClass => {
-                            bool isValid = typeof(IPageBuilder).IsAssignableFrom(scriptClass)
+                            bool isValid = typeof(IModalBuilder).IsAssignableFrom(scriptClass)
                                            && !scriptClass.IsAbstract;
                             return isValid;
                         }
                     );
 
-                    // === Memo for builder ===
+                    // Memo
                     EditorGUILayout.LabelField("Memo");
                     var memoProp = serializedObject.FindProperty("memo");
                     if (memoProp != null)
@@ -163,8 +141,8 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        #region Capture Thumbnail
-        private void CapturePrefabThumbnail(PageNode node)
+        // Capture
+        private void CapturePrefabThumbnail(ModalNode node)
         {
             var prefab = node.ViewPrefab;
             if (!prefab)
@@ -187,12 +165,8 @@ namespace com.kwanjoong.unityuistoryboard.Editor
                 EditorUtility.DisplayDialog("Capture Thumbnail", "Failed to capture screenshot.", "OK");
             }
         }
-        #endregion
 
-        #region Helper UI: DrawObjectFieldWithOpenButton
-        /// <summary>
-        /// ObjectField + Open Button
-        /// </summary>
+        // DrawObjectFieldWithOpenButton / DrawMonoScriptWithOpenButton => same logic as PageNodeEditor
         private void DrawObjectFieldWithOpenButton(SerializedProperty prop, string label, Action openAction)
         {
             EditorGUILayout.BeginHorizontal();
@@ -211,9 +185,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             }
             EditorGUILayout.EndHorizontal();
         }
-        #endregion
 
-        #region Helper UI: DrawMonoScriptWithOpenButton
         private void DrawMonoScriptWithOpenButton(
             SerializedProperty prop,
             string label,
@@ -237,7 +209,6 @@ namespace com.kwanjoong.unityuistoryboard.Editor
 
                 if (GUILayout.Button("Open", GUILayout.Width(50)))
                 {
-                    // Open MonoScript
                     AssetDatabase.OpenAsset(script);
                 }
 
@@ -245,7 +216,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             }
             EditorGUILayout.EndHorizontal();
 
-            // Validation Msg
+            // Validation msg
             if (prop.objectReferenceValue != null)
             {
                 MonoScript ms = prop.objectReferenceValue as MonoScript;
@@ -262,10 +233,8 @@ namespace com.kwanjoong.unityuistoryboard.Editor
                 }
             }
         }
-        #endregion
 
-        #region Prefab Info (View & LifetimeScope)
-        private void DrawPageViewAndScopeInfo(GameObject prefab)
+        private void DrawModalViewAndScopeInfo(GameObject prefab)
         {
             string path = AssetDatabase.GetAssetPath(prefab);
             if (string.IsNullOrEmpty(path))
@@ -281,29 +250,29 @@ namespace com.kwanjoong.unityuistoryboard.Editor
                 return;
             }
 
-            var pageView = prefabRoot.GetComponent<PageViewBase>();
+            // ModalViewBase instead of PageViewBase
+            var modalView = prefabRoot.GetComponent<ModalViewBase>();
             var scope = prefabRoot.GetComponent<LifetimeScope>();
 
-            // PageView
-            if (!pageView)
+            // ModalView
+            if (!modalView)
             {
-                EditorGUILayout.HelpBox("No PageViewBase found on root GameObject.", MessageType.Warning);
+                EditorGUILayout.HelpBox("No ModalViewBase found on root GameObject.", MessageType.Warning);
             }
             else
             {
-                // 한 줄 + [Open]
                 EditorGUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField($"PageViewBase: {pageView.GetType().Name}");
+                    EditorGUILayout.LabelField($"ModalViewBase: {modalView.GetType().Name}");
                     if (GUILayout.Button("Open", GUILayout.Width(50)))
                     {
-                        OpenMonoScript(pageView);
+                        OpenMonoScript(modalView);
                     }
                 }
                 EditorGUILayout.EndHorizontal();
             }
 
-            // LifetimeScope
+            // LifetimeScope same
             if (!scope)
             {
                 EditorGUILayout.HelpBox("No LifetimeScope found on root GameObject.", MessageType.Warning);
@@ -328,10 +297,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
         {
             if (component == null) return;
             var mono = component as MonoBehaviour;
-            if (!mono)
-            {
-                mono = component.GetComponent<MonoBehaviour>();
-            }
+            if (!mono) mono = component.GetComponent<MonoBehaviour>();
             if (mono)
             {
                 var script = MonoScript.FromMonoBehaviour(mono);
@@ -339,12 +305,9 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             }
             else
             {
-                EditorUtility.DisplayDialog("Open Code",
-                    "Could not open script (not a MonoBehaviour?).",
-                    "OK");
+                EditorUtility.DisplayDialog("Open Code", "Could not open script (not a MonoBehaviour?).", "OK");
             }
         }
-        #endregion
     }
 }
 #endif

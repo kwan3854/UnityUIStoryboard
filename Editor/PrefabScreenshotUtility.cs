@@ -13,7 +13,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
         /// Automatically adjusts an orthographic camera so the entire UI is visible.
         /// Returns the rendered Texture2D.
         /// </summary>
-        public static Texture2D CapturePrefab(GameObject prefab, int width, int height)
+        public static Texture2D TakeScreenshot(GameObject prefab, int width, int height)
         {
             if (prefab == null)
             {
@@ -23,7 +23,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
 
             // 1) Create PreviewRenderUtility & configure camera
             var preview = new PreviewRenderUtility();
-            preview.camera.backgroundColor = Color.gray;
+            preview.camera.backgroundColor = Color.clear;
             preview.camera.clearFlags = CameraClearFlags.SolidColor;
             preview.camera.cameraType = CameraType.Game;
             preview.camera.farClipPlane = 1000f;
