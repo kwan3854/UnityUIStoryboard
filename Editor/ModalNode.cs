@@ -15,9 +15,12 @@ namespace com.kwanjoong.unityuistoryboard.Editor
     public class ModalNode : Node
     {
         // Ports
-        [Input] public PageViewBase pageViewIn;
-        [Input] public ModalViewBase modalViewIn;
-        [Output] public ModalViewBase modalViewOut;
+        [Input(typeConstraint = TypeConstraint.Inherited)]
+        public PageViewBase pageViewIn;
+        [Input(typeConstraint = TypeConstraint.Inherited)]
+        public ModalViewBase modalViewIn;
+        [Output(typeConstraint = TypeConstraint.Inherited)]
+        public ModalViewBase modalViewOut;
 
         // -- Prefab --
         [SerializeField]

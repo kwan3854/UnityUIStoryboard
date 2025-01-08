@@ -15,9 +15,12 @@ namespace com.kwanjoong.unityuistoryboard.Editor
     /// </summary>
     public class PageNode : Node
     {
-        [Input] public PageViewBase pageViewIn;
-        [Input] public ModalViewBase modalViewIn;
-        [Output] public PageViewBase pageViewOut;
+        [Input(typeConstraint = TypeConstraint.Inherited)]
+        public PageViewBase pageViewIn;
+        [Input(typeConstraint = TypeConstraint.Inherited)]
+        public ModalViewBase modalViewIn;
+        [Output(typeConstraint = TypeConstraint.Inherited)]
+        public PageViewBase pageViewOut;
 
         // -- Prefab --
         [SerializeField] private GameObject viewPrefab;
