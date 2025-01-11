@@ -30,8 +30,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             EditorGUILayout.BeginHorizontal();
             {
                 // [Left: Thumbnail]
-                var thumbProp = serializedObject.FindProperty("cachedThumbnail");
-                Texture2D cachedTex = thumbProp.objectReferenceValue as Texture2D;
+                Texture2D cachedTex = (target as ModalNode)?.GetCachedThumbnail();
 
                 float thumbWidth = 320f;
                 float thumbHeight = 400f;

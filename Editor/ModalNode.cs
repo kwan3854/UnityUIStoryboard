@@ -31,12 +31,16 @@ namespace com.kwanjoong.unityuistoryboard.Editor
         [SerializeField] private MonoScript modelScript;
         [SerializeField] private MonoScript builderScript;   // => IModalBuilder
 
-        // -- Cached thumbnail
+        // // -- Cached thumbnail
+        // [SerializeField, HideInInspector]
+        // private Texture2D cachedThumbnail;
         [SerializeField, HideInInspector]
-        private Texture2D cachedThumbnail;
+        private byte[] thumbnailData;
 
         // Memo field
         [SerializeField] private string memo;
+        
+        private Texture2D _cachedThumbnail;
 
         protected override void Init()
         {
@@ -53,12 +57,36 @@ namespace com.kwanjoong.unityuistoryboard.Editor
         public MonoScript LifecycleScript => lifecycleScript;
         public MonoScript ModelScript => modelScript;
         public MonoScript BuilderScript => builderScript;
-        public Texture2D CachedThumbnail => cachedThumbnail;
         public string Memo { get => memo; set => memo = value; }
 
+        // Called by editor script to store the newly captured screenshot
         public void SetCachedThumbnail(Texture2D tex)
         {
-            cachedThumbnail = tex;
+            if (tex == null)
+            {
+                return;
+            }
+            
+            thumbnailData = tex.EncodeToPNG();
+            _cachedThumbnail = tex;
+        }
+        
+        public Texture2D GetCachedThumbnail()
+        {
+            if (thumbnailData == null)
+            {
+                return null;
+            }
+            
+            if (_cachedThumbnail != null)
+            {
+                return _cachedThumbnail;
+            }
+
+            var tex = new Texture2D(2, 2);
+            tex.LoadImage(thumbnailData);
+            _cachedThumbnail = tex;
+            return tex;
         }
     }
 }

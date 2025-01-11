@@ -2,7 +2,7 @@ using UnityEditor.IMGUI.Controls;
 
 namespace com.kwanjoong.unityuistoryboard.Editor
 {
-    public class PaletteTreeViewItem : TreeViewItem
+    public class StoryboardTreeViewItem : TreeViewItem
     {
         public bool IsFolder;
         public bool RenameMode; // Toggle for inline rename

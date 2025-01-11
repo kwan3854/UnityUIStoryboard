@@ -1,10 +1,13 @@
 #if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using com.kwanjoong.unityuistoryboard.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+using XNodeEditor;
 
 
 namespace com.kwanjoong.unityuistoryboard.Editor
@@ -43,11 +46,19 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             if (_treeViewState == null)
                 _treeViewState = new TreeViewState();
 
-            _treeView = new StoryboardTreeView(_treeViewState);
-            _treeView.OnGetAllStoryboardAssets = FindAllStoryboardAssets;
-            _treeView.OnDoubleClickStoryboard = (item) =>
+            _treeView = new StoryboardTreeView(_treeViewState)
             {
-                Debug.Log($"Double-clicked storyboard: {item.StoryboardName} (path={item.AssetPath})");
+                OnGetAllStoryboardAssets = FindAllStoryboardAssets,
+                OnDoubleClickStoryboard = (item) =>
+                {
+                    // Open the storyboard asset in new window
+                    var asset = AssetDatabase.LoadAssetAtPath<UIStoryboardGraph>(item.AssetPath);
+                    if (asset != null)
+                    {
+                        var window = NodeEditorWindow.Open(asset);
+                        window.titleContent = new GUIContent(item.StoryboardName);
+                    }
+                }
             };
 
             if (_managerData != null)

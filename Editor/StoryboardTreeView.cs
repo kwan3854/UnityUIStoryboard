@@ -12,11 +12,11 @@ namespace com.kwanjoong.unityuistoryboard.Editor
     public class StoryboardTreeView : TreeView
     {
         public Func<List<string>> OnGetAllStoryboardAssets;
-        public Action<PaletteTreeViewItem> OnDoubleClickStoryboard;
+        public Action<StoryboardTreeViewItem> OnDoubleClickStoryboard;
 
         private int _currentId = 1;
-        private Dictionary<int, PaletteTreeViewItem> _items = new Dictionary<int, PaletteTreeViewItem>();
-        private PaletteTreeViewItem _root;
+        private Dictionary<int, StoryboardTreeViewItem> _items = new Dictionary<int, StoryboardTreeViewItem>();
+        private StoryboardTreeViewItem _root;
 
         public StoryboardTreeView(TreeViewState state) : base(state)
         {
@@ -24,7 +24,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             showBorder = true;
             rowHeight = EditorGUIUtility.singleLineHeight * 1.2f;
 
-            _root = new PaletteTreeViewItem
+            _root = new StoryboardTreeViewItem
             {
                 id = 0,
                 depth = -1,
@@ -43,7 +43,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             // First pass: Create all items
             foreach (var node in data.nodes)
             {
-                var item = new PaletteTreeViewItem
+                var item = new StoryboardTreeViewItem
                 {
                     id = node.id,
                     IsFolder = node.isFolder,
@@ -111,14 +111,14 @@ namespace com.kwanjoong.unityuistoryboard.Editor
 
             foreach (var item in _items.Values)
             {
-                var parentItem = item.parent as PaletteTreeViewItem;
+                var parentItem = item.parent as StoryboardTreeViewItem;
                 var childrenIds = new List<int>();
 
                 if (item.children != null)
                 {
                     foreach (var child in item.children)
                     {
-                        if (child is PaletteTreeViewItem paletteChild)
+                        if (child is StoryboardTreeViewItem paletteChild)
                         {
                             childrenIds.Add(paletteChild.id);
                         }
@@ -145,7 +145,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             return _root;
         }
 
-        private void RebuildTreeRecursive(PaletteTreeViewItem parent)
+        private void RebuildTreeRecursive(StoryboardTreeViewItem parent)
         {
             var childItems = _items.Values.Where(item => item.parent == parent).ToList();
 
@@ -162,7 +162,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
 
         protected override void RowGUI(RowGUIArgs args)
         {
-            var item = args.item as PaletteTreeViewItem;
+            var item = args.item as StoryboardTreeViewItem;
             if (item == null) return;
 
             // inline rename
@@ -198,7 +198,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             }
         }
         
-        private void OpenStoryboardWindow(PaletteTreeViewItem item)
+        private void OpenStoryboardWindow(StoryboardTreeViewItem item)
         {
             if (item.IsFolder) return;
 
@@ -213,7 +213,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
         }
         
 
-        private void FinalizeRename(PaletteTreeViewItem item)
+        private void FinalizeRename(StoryboardTreeViewItem item)
         {
             if (item.IsFolder)
             {
@@ -241,20 +241,28 @@ namespace com.kwanjoong.unityuistoryboard.Editor
                     AssetDatabase.SaveAssets();
                     AssetDatabase.Refresh();
                     item.AssetPath = newPath;
+                    
                 }
             }
 
             item.RenameMode = false;
+            item.displayName = item.IsFolder ? item.FolderName : item.StoryboardName;
+            
+            if (EditorWindow.GetWindow<UIStoryboardManagerWindow>() is UIStoryboardManagerWindow window)
+            {
+                window.SaveManagerData();
+            }
+            
             Reload();
         }
 
-        private bool HasFolderNameDuplicate(PaletteTreeViewItem folder)
+        private bool HasFolderNameDuplicate(StoryboardTreeViewItem folder)
         {
             if (folder.parent == null) return false;
             var siblings = folder.parent.children;
             foreach (var s in siblings)
             {
-                if (s is PaletteTreeViewItem p
+                if (s is StoryboardTreeViewItem p
                     && p.IsFolder
                     && p != folder
                     && p.FolderName.Equals(folder.FolderName, StringComparison.OrdinalIgnoreCase))
@@ -275,7 +283,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
 
         protected override void SetupDragAndDrop(SetupDragAndDropArgs args)
         {
-            var dragged = new List<PaletteTreeViewItem>();
+            var dragged = new List<StoryboardTreeViewItem>();
             foreach (var id in args.draggedItemIDs)
             {
                 if (_items.ContainsKey(id))
@@ -295,18 +303,18 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             if (!args.performDrop)
                 return DragAndDropVisualMode.Move;
 
-            var dragged = DragAndDrop.GetGenericData("PaletteTreeViewDrag") as List<PaletteTreeViewItem>;
+            var dragged = DragAndDrop.GetGenericData("PaletteTreeViewDrag") as List<StoryboardTreeViewItem>;
             if (dragged == null || dragged.Count == 0)
                 return DragAndDropVisualMode.None;
 
-            var parentItem = args.parentItem as PaletteTreeViewItem;
+            var parentItem = args.parentItem as StoryboardTreeViewItem;
             var insertIdx = args.insertAtIndex;
 
             switch (args.dragAndDropPosition)
             {
                 case DragAndDropPosition.BetweenItems:
                     if (parentItem == null)
-                        parentItem = rootItem as PaletteTreeViewItem;
+                        parentItem = rootItem as StoryboardTreeViewItem;
 
                     foreach (var d in dragged)
                     {
@@ -352,7 +360,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
                     break;
 
                 case DragAndDropPosition.OutsideItems:
-                    var root = rootItem as PaletteTreeViewItem;
+                    var root = rootItem as StoryboardTreeViewItem;
                     foreach (var d in dragged)
                     {
                         if (d.parent != null && d.parent.children != null)
@@ -429,7 +437,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             menu.ShowAsContext();
         }
 
-        private void AddMoveToFolderMenuItems(GenericMenu menu, PaletteTreeViewItem item)
+        private void AddMoveToFolderMenuItems(GenericMenu menu, StoryboardTreeViewItem item)
         {
             var folders = _items.Values.Where(x => x.IsFolder && x != item).ToList();
             foreach (var folder in folders)
@@ -439,7 +447,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             }
         }
 
-        private void AddDeleteMenuItem(GenericMenu menu, PaletteTreeViewItem item)
+        private void AddDeleteMenuItem(GenericMenu menu, StoryboardTreeViewItem item)
         {
             menu.AddItem(new GUIContent("Delete"), false, () =>
             {
@@ -452,7 +460,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             });
         }
 
-        private void MoveItemToFolder(PaletteTreeViewItem item, PaletteTreeViewItem targetFolder)
+        private void MoveItemToFolder(StoryboardTreeViewItem item, StoryboardTreeViewItem targetFolder)
         {
             if (item.parent != null && item.parent.children != null)
             {
@@ -477,7 +485,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
             Reload();
         }
 
-        private void DeleteItem(PaletteTreeViewItem item)
+        private void DeleteItem(StoryboardTreeViewItem item)
         {
             if (!item.IsFolder && !string.IsNullOrEmpty(item.AssetPath))
             {
@@ -503,7 +511,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
         /// Create a folder item at (optional) parent. 
         /// Checks duplication among parent's children.
         /// </summary>
-        public PaletteTreeViewItem CreateFolder(string name, PaletteTreeViewItem parent = null)
+        public StoryboardTreeViewItem CreateFolder(string name, StoryboardTreeViewItem parent = null)
         {
             if (parent == null) parent = _root;
 
@@ -515,7 +523,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
                 return null;
             }
 
-            var folder = new PaletteTreeViewItem
+            var folder = new StoryboardTreeViewItem
             {
                 id = _currentId++,
                 IsFolder = true,
@@ -544,11 +552,11 @@ namespace com.kwanjoong.unityuistoryboard.Editor
         /// <summary>
         /// Create a storyboard item at (optional) parent, referencing an assetPath.
         /// </summary>
-        public PaletteTreeViewItem CreateStoryboard(string name, string assetPath, PaletteTreeViewItem parent = null)
+        public StoryboardTreeViewItem CreateStoryboard(string name, string assetPath, StoryboardTreeViewItem parent = null)
         {
             if (parent == null) parent = _root;
 
-            var sb = new PaletteTreeViewItem
+            var sb = new StoryboardTreeViewItem
             {
                 id = _currentId++,
                 IsFolder = false,
@@ -601,7 +609,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
                 if (!found)
                 {
                     var fileName = Path.GetFileNameWithoutExtension(p);
-                    CreateStoryboard(fileName, p, rootItem as PaletteTreeViewItem);
+                    CreateStoryboard(fileName, p, rootItem as StoryboardTreeViewItem);
                     added++;
                 }
             }

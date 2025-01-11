@@ -37,8 +37,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
                 // ---------------------------------------------
                 // [Left: Thumbnail]
                 // ---------------------------------------------
-                var thumbProp = serializedObject.FindProperty("cachedThumbnail");
-                Texture2D cachedTex = thumbProp.objectReferenceValue as Texture2D;
+                Texture2D cachedTex = (target as PageNode)?.GetCachedThumbnail();
 
                 float thumbWidth = 320f;
                 float thumbHeight = 400f;

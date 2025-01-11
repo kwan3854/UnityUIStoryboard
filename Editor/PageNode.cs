@@ -32,7 +32,9 @@ namespace com.kwanjoong.unityuistoryboard.Editor
 
         // -- Cached thumbnail from "Update Thumbnail" button --
         [SerializeField, HideInInspector] 
-        private Texture2D cachedThumbnail;
+        private byte[] thumbnailData;
+        
+        private Texture2D _cachedThumbnail;
 
         [SerializeField] private string memo;
 
@@ -51,12 +53,35 @@ namespace com.kwanjoong.unityuistoryboard.Editor
         public MonoScript LifecycleScript => lifecycleScript;
         public MonoScript ModelScript => modelScript;
         public MonoScript BuilderScript => builderScript;
-        public Texture2D CachedThumbnail => cachedThumbnail;
 
         // Called by editor script to store the newly captured screenshot
         public void SetCachedThumbnail(Texture2D tex)
         {
-            cachedThumbnail = tex;
+            if (tex == null)
+            {
+                return;
+            }
+            
+            thumbnailData = tex.EncodeToPNG();
+            _cachedThumbnail = tex;
+        }
+        
+        public Texture2D GetCachedThumbnail()
+        {
+            if (thumbnailData == null)
+            {
+                return null;
+            }
+            
+            if (_cachedThumbnail != null)
+            {
+                return _cachedThumbnail;
+            }
+
+            var tex = new Texture2D(2, 2);
+            tex.LoadImage(thumbnailData);
+            _cachedThumbnail = tex;
+            return tex;
         }
         
         public string Memo {get => memo; set => memo = value;}
