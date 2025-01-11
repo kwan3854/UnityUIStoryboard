@@ -2,8 +2,8 @@
 
 **Unity UI Storyboard** is a powerful collaboration and organization tool designed for creating and managing complex UI structures in Unity. It simplifies the process of designing, building, and maintaining structured UI systems, ensuring seamless collaboration between team members such as planners, UI/UX designers, and programmers.
 
-![Manager.png](Documentation%7E/Manager.png)
-![Storyboard.png](Documentation%7E/Storyboard.png)
+![Manager.png](Documentation~/Manager.png)
+![Storyboard.png](Documentation~/Storyboard.png)
 
 ## Why Use Unity UI Storyboard?
 
