@@ -22,7 +22,7 @@ namespace com.kwanjoong.unityuistoryboard.Editor
         private string _newStoryboardName = "NewStoryboard";
         private const string ManagerAssetPath = "Assets/UIStoryboard/StoryboardManagerData.asset";
 
-        [MenuItem("Window/Custom/UI Storyboard Manager")]
+        [MenuItem("Window/UI Storyboard/Storyboard Manager")]
         public static void Open()
         {
             var wnd = GetWindow<UIStoryboardManagerWindow>();
