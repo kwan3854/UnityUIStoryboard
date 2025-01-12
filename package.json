@@ -1,6 +1,6 @@
 {
   "name": "com.kwanjoong.unityuistoryboard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "displayName": "Unity UI Storyboard",
   "description": "A Unity package for structured UI development.",
   "unity": "2022.3",
